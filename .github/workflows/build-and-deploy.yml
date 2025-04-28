@@ -31,7 +31,7 @@ jobs:
           context: .
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
-          file: ./Dockerfile  # specify the path to the Dockerfile if not in the root
+          file: ./Dockerfile
 
       - name: Azure Login
         uses: azure/login@v1
