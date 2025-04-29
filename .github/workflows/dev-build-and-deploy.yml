@@ -1,4 +1,4 @@
-name: Deploy to Azure Container Apps
+name: Deploy dev to Azure Container Apps
 
 on:
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
+          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:dev-${{ github.sha }}
           file: ./Dockerfile
 
       - name: Azure Login

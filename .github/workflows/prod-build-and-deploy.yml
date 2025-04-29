@@ -1,0 +1,46 @@
+name: Deploy prod to Azure Container Apps 
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [prod]
+
+env:
+  AZURE_CONTAINER_REGISTRY: mdmstewardshiptool
+  CONTAINER_APP_NAME: mdm-stewardshiptool-prod
+  RESOURCE_GROUP: MDM_Stewardship_Tool
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v4
+
+      - name: Login to Azure Container Registry (ACR)
+        uses: docker/login-action@v3 
+        with:
+          registry: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
+          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+
+      - name: Build and push container image to ACR
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:prod-${{ github.sha }}
+          file: ./Dockerfile
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Container Apps
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
+          containerAppName: ${{ env.CONTAINER_APP_NAME }}
