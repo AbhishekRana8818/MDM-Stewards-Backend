@@ -13,5 +13,5 @@ async def test():
     print("log test to check buffering")
     print("check the logs of the azure app active dir")
 
-    return {"message" : "Testing  , Hi i am working 🙏"}
+    return {"message" : "Testing Access Ruleset , Hi i am working 🙏"}
 
